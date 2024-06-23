@@ -1,7 +1,7 @@
-import { Center, Table } from '@mantine/core';
+import { Table } from '@mantine/core';
 
 function TableCrop({ crmap }) {
-  console.log(crmap);
+  // console.log(crmap);
 
   const row = Object.keys(crmap).map((element: any) =>
     <Table.Tr key={element}>

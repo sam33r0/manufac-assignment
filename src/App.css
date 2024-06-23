@@ -7,9 +7,5 @@
   text-align: center;
   justify-items: center;
   align-items: center;
-}
-
-.table {
-  width: 70%;
-  padding: initial;
+  padding-bottom: 8vh;
 }

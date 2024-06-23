@@ -91,11 +91,14 @@ function TableViewer({ data }: { data: Array<any> }) {
 
   return (
     <div className="Center">
-      <h2>Annual Crop Production 1950-2020 (7a)</h2>
-      <TableYear yMap={ymap} />
-      <br />
-      <h2>Average Yield & Cultivation Area 1950-2020 (7b)</h2>
-      <TableCrop crmap={crmap} />
+      <div>
+        <h2>Annual Crop Production 1950-2020 (7a)</h2>
+        <TableYear yMap={ymap} />
+      </div>
+      <div>
+        <h2>Average Yield & Cultivation Area 1950-2020 (7b)</h2>
+        <TableCrop crmap={crmap} />
+      </div>
     </div>
   );
 }
