@@ -91,10 +91,10 @@ function TableViewer({ data }: { data: Array<any> }) {
 
   return (
     <div className="Center">
-      <h2>Table 1</h2>
+      <h2>Annual Crop Production 1950-2020 (7a)</h2>
       <TableYear yMap={ymap} />
       <br />
-      <h2>Table 2</h2>
+      <h2>Average Yield & Cultivation Area 1950-2020 (7b)</h2>
       <TableCrop crmap={crmap} />
     </div>
   );

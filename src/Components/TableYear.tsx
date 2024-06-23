@@ -4,7 +4,7 @@ function TableYear({ yMap }) {
   // console.log(yMap);
   
   const row = Object.keys(yMap).map((element: any) =>
-    <Table.Tr key={element}>
+    <Table.Tr key={element} color='teal'>
       <Table.Td>{element}</Table.Td>
       <Table.Td>{yMap[element][13].name}</Table.Td>
       <Table.Td>{yMap[element][14].name}</Table.Td>
@@ -12,6 +12,7 @@ function TableYear({ yMap }) {
   )
 
   return (
+    <div className='table'>
       <Table withColumnBorders withTableBorder  >
         <Table.Thead>
           <Table.Tr>
@@ -24,6 +25,7 @@ function TableYear({ yMap }) {
         </Table.Thead>
         <Table.Tbody>{row}</Table.Tbody>
       </Table>
+      </div>
   );
 }
 

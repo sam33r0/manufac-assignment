@@ -8,7 +8,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <MantineProvider defaultColorScheme="dark">
+    <MantineProvider defaultColorScheme="light">
       <App />
     </MantineProvider>
   </React.StrictMode>
