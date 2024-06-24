@@ -2,7 +2,7 @@ import { Table } from '@mantine/core';
 
 function TableCrop({ crmap }) {
   // console.log(crmap);
-
+  // Map over crop data to generate table rows
   const row = Object.keys(crmap).map((element: any) =>
     <Table.Tr key={element}>
       <Table.Td>{element}</Table.Td>

@@ -1,46 +1,153 @@
-# Getting Started with Create React App
+# Manufac Assignment: Crop Production Data 
+## Overview
+This project visualizes crop production data from India between 1950 and 2020. It displays two tables:
+Annual Crop Production (1950-2020): Lists the crop with the maximum and minimum production each year.
+Average Yield & Cultivation Area (1950-2020): Shows the average yield and cultivation area of each crop over the entire period.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Table of Contents
 
-## Available Scripts
+- [Installation](#installation)
+- [Usage](#usage)
+- [Data Processing](#data-processing)
+- [License](#license)
 
-In the project directory, you can run:
+## Installation
 
-### `yarn start`
+1. Clone the repository:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+   ```sh
+   git clone https://github.com/yourusername/crop-production-viewer.git
+   cd crop-production-viewer
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Install dependencies:
 
-### `yarn build`
+    ```sh
+    yarn install
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. Start Server
+    ```sh
+    yarn start
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Usage
 
-### `yarn eject`
+Open your browser and navigate to http://localhost:3000 to view the application.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Data Processing
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+The `TableViewer` component is responsible for processing the data and passing it to the `TableYear` and `TableCrop` components. Below is a high-level overview of the data processing logic:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+1. **Initialization**: Initialize state variables to hold the year-wise and crop-wise data maps.
 
-## Learn More
+    ```tsx
+    const [ymap, setYmap] = useState<{ [key: number]: YmapInter[] }>({});
+    const [crmap, setCrmap] = useState<{ [key: string]: CrmapInter }>({});
+    ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+2. **Data Processing Function**: Define a function to process the input data and populate the year-wise and crop-wise maps.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    - **Crop Map**: Accumulate area under cultivation and yield of crops for each crop name.
+    - **Year Map**: Track maximum and minimum production crops for each year and accumulate data.
+
+    ```tsx
+    const processData = (data: Array<any>) => {
+      let cropMap: { [key: string]: CrmapInter } = {};
+      let yearMap: { [key: number]: YmapInter[] } = {};
+      let op = 0;
+      let yr = 1950;
+      let minProd = Number.MAX_VALUE;
+      let minProdCrop = "";
+      let maxProdCrop = "";
+      let maxProd = Number.MIN_VALUE;
+
+      data.forEach((elem, ind) => {
+        const index = Math.floor(ind / 13);
+
+        if (!cropMap[elem["Crop Name"]]) {
+          cropMap[elem["Crop Name"]] = { areaUnderCult: 0, yieldOfCrop: 0, n: 0 };
+        }
+
+        const areaUnderCultivation = parseFloat(elem["Area Under Cultivation (UOM:Ha(Hectares))"]) || 0;
+        const yieldOfCrops = parseFloat(elem["Yield Of Crops (UOM:Kg/Ha(KilogramperHectare))"]) || 0;
+
+        cropMap[elem["Crop Name"]].areaUnderCult += areaUnderCultivation;
+        cropMap[elem["Crop Name"]].yieldOfCrop += yieldOfCrops;
+        cropMap[elem["Crop Name"]].n += 1;
+
+        if (index !== op) {
+          yearMap[yr].push({ name: maxProdCrop, prod: maxProd, area: 0, yield: 0 });
+          yearMap[yr].push({ name: minProdCrop, prod: minProd, area: 0, yield: 0 });
+          op++;
+          yr++;
+          maxProd = Number.MIN_VALUE;
+          minProd = Number.MAX_VALUE;
+          maxProdCrop = "";
+          minProdCrop = "";
+        }
+
+        if (!yearMap[yr]) {
+          yearMap[yr] = [];
+        }
+
+        const cropProduction = parseFloat(elem["Crop Production (UOM:t(Tonnes))"]) || 0;
+        yearMap[yr].push({
+          name: elem["Crop Name"],
+          prod: cropProduction,
+          area: areaUnderCultivation,
+          yield: yieldOfCrops,
+        });
+
+        if (cropProduction > maxProd) {
+          maxProdCrop = elem["Crop Name"];
+          maxProd = cropProduction;
+        }
+
+        if (cropProduction < minProd) {
+          minProdCrop = elem["Crop Name"];
+          minProd = cropProduction;
+        }
+      });
+
+      yearMap[yr]?.push({ name: maxProdCrop, prod: maxProd, area: 0, yield: 0 });
+      yearMap[yr]?.push({ name: minProdCrop, prod: minProd, area: 0, yield: 0 });
+
+      return { yearMap, cropMap };
+    };
+    ```
+
+3. **Update State**: Use `useEffect` to process the data and update the state variables when the data changes.
+
+    ```tsx
+    useEffect(() => {
+      const { yearMap, cropMap } = processData(data);
+      setYmap(yearMap);
+      setCrmap(cropMap);
+    }, [data]);
+    ```
+
+4. **Render Tables**: Render the `TableYear` and `TableCrop` components, passing the processed data as props.
+
+    ```tsx
+    return (
+      <div className="Center">
+        <div>
+          <h2>Annual Crop Production 1950-2020 (7a)</h2>
+          <TableYear yMap={ymap} />
+        </div>
+        <div>
+          <h2>Average Yield & Cultivation Area 1950-2020 (7b)</h2>
+          <TableCrop crmap={crmap} />
+        </div>
+      </div>
+    );
+    ```
+
+
+# Project Structure
+1. App.tsx: The main component that fetches the data and renders the TableViewer component.<br/>
+2. TableViewer.tsx: Processes the fetched data and passes it to the TableYear and TableCrop components for rendering.<br/>
+3. TableYear.tsx: Displays a table of the crop with the maximum and minimum production for each year.<br/>
+4. TableCrop.tsx: Displays a table of the average yield and cultivation area for each crop.<br/>

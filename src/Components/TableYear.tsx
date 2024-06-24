@@ -2,7 +2,7 @@ import { Table } from '@mantine/core';
 
 function TableYear({ yMap }) {
   // console.log(yMap);
-  
+  // Map over crop data to generate table rows
   const row = Object.keys(yMap).map((element: any) =>
     <Table.Tr key={element} color='teal'>
       <Table.Td>{element}</Table.Td>
