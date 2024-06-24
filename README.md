@@ -16,8 +16,8 @@ Average Yield & Cultivation Area (1950-2020): Shows the average yield and cultiv
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/yourusername/crop-production-viewer.git
-   cd crop-production-viewer
+   git clone https://github.com/sam33r0/manufac-assignment
+   cd manufac-assignment
 
 
 
